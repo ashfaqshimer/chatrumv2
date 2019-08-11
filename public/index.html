@@ -4,12 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Chat App</title>
-</head>
+    <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous"
+    />
+    <script src="https://kit.fontawesome.com/b11a7ff4b2.js"></script>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="icon" href="/img/favicon.png" type="image/png" />
+    <title>ChatRum | Real-Time Chatoom</title>
+</head>    
+         
 <body>
-    <h1>Chat App</h1>
-    <button id="increment">+1</button>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/chat.js"></script>
-</body>
+    <div class="chat">
+        <div class="chat__sidebar">
+
+        </div>
+        <div class="chat__main">
+               <!-- Render messages here -->
+               <div id="messages" class="chat__messages"></div> 
+
+               <div class="compose">
+                       	<!-- Send Message Form -->
+               <form id="messageForm">
+                    <input id="message" name="message" placeholder="Message">
+                    <button id="sendMsgBtn" type="submit">Send</button>
+                </form>
+ 
+                <button id="sendLocation">Send Location</button>
+               </div>
+           
+        </div>
+    </div>
+         
+        <script id="message-template" type="text/html">
+            <div class='message' >
+                <p>
+                    <span class='message__name'>User name</span>
+                    <span class='message__meta'>{{createdAt}}</span>
+                </p>
+                <p>{{msg}}</p>
+            </div>    
+        </script>
+
+        <script id="link-template" type="text/html">
+            <div class='message'>
+                    <p>
+                            <span class='message__name'>User name</span>
+                            <span class='message__meta'>{{createdAt}}</span>
+                        </p>
+                        <p>{{msg}}</p>
+                <p><a class='text-warning' href={{url}} target='_blank'>My current location</a></p>
+            </div>    
+        </script>
+
+        <!-- CDN Scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.7.0/qs.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/chat.js"></script>
+    </body>
 </html>
