@@ -118,6 +118,10 @@ button:disabled {
     margin-bottom: 16px;   
 }
 
+.message p{
+    margin: 0 auto;
+}
+
 .message__name {
     font-weight: 600;
     font-size: 14px;

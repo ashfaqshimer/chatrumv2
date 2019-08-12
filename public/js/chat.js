@@ -10,23 +10,61 @@ const messages = document.querySelector('#messages');
 // Templates
 const messageTemplate = document.querySelector('#message-template').innerHTML;
 const linkTemplate = document.querySelector('#link-template').innerHTML;
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML;
 
-socket.on('message', ({ text, createdAt }) => {
-	console.log(text);
+// Options
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+
+const autoScroll = () => {
+	// New message element
+	const newMessage = messages.lastElementChild;
+
+	// Height of the new message
+	const newMessageStyles = getComputedStyle(newMessage);
+	const newMessageMargin = parseInt(newMessageStyles.marginBottom);
+	const newMessageHeight = newMessage.offsetHeight + newMessageMargin;
+
+	// Visible height
+	const visibleHeight = messages.offsetHeight;
+
+	// Height of messages container
+	const containerHeight = messages.scrollHeight;
+
+	// How far scrolled
+	const scrollOffset = messages.scrollTop + visibleHeight;
+
+	if (containerHeight - newMessageHeight <= scrollOffset) {
+		messages.scrollTop = messages.scrollHeight;
+	}
+};
+
+socket.on('message', ({ username, text, createdAt }) => {
 	const html = Mustache.render(messageTemplate, {
+		username,
 		msg       : text,
 		createdAt : moment(createdAt).format('h:mm a')
 	});
 	messages.insertAdjacentHTML('beforeend', html);
+	autoScroll();
 });
 
-socket.on('locationMessage', ({ url, createdAt }) => {
+socket.on('locationMessage', ({ username, url, createdAt }) => {
 	console.log(url);
 	const html = Mustache.render(linkTemplate, {
+		username,
 		url,
 		createdAt : moment(createdAt).format('h:mm a')
 	});
 	messages.insertAdjacentHTML('beforeend', html);
+	autoScroll();
+});
+
+socket.on('roomData', ({ room, users }) => {
+	const html = Mustache.render(sidebarTemplate, {
+		room,
+		users
+	});
+	document.querySelector('#sidebar').innerHTML = html;
 });
 
 messageForm.addEventListener('submit', (e) => {
@@ -41,7 +79,7 @@ messageForm.addEventListener('submit', (e) => {
 		messageFormInput.focus();
 
 		if (error) {
-			return console.log(error);
+			return alert(error);
 		}
 		console.log('The message was delivered!');
 	});
@@ -66,4 +104,11 @@ sendLocationBtn.addEventListener('click', () => {
 			}
 		);
 	});
+});
+
+socket.emit('join', { username, room }, (error) => {
+	if (error) {
+		alert(error);
+		location.href = '/';
+	}
 });
